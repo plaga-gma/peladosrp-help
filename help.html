@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Comandos - PeladosRP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-card: #242424;
+            --accent-primary: #5ba3d0;
+            --accent-secondary: #7ec8e3;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border: #3a3a3a;
+            --shadow: rgba(91, 163, 208, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            border-bottom: 2px solid var(--border);
+            background: linear-gradient(180deg, var(--bg-card) 0%, transparent 100%);
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            letter-spacing: 8px;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 20px 20px 20px 60px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+        }
+
+        #searchInput:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(91, 163, 208, 0.2);
+        }
+
+        #searchInput::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .category {
+            margin-bottom: 20px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            overflow: hidden;
+        }
+
+        .category:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .category-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(91, 163, 208, 0.05);
+        }
+
+        .category-header:hover {
+            background: rgba(91, 163, 208, 0.1);
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .chevron {
+            font-size: 1.2rem;
+            color: var(--accent-secondary);
+        }
+
+        .category.active .chevron {
+            transform: rotate(180deg);
+        }
+
+        .category-content {
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .category.active .category-content {
+            max-height: 2000px;
+            padding: 0 25px 25px;
+        }
+
+        .command-item {
+            padding: 18px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--accent-secondary);
+            border-radius: 4px;
+        }
+
+        .command-item:hover {
+            background: rgba(91, 163, 208, 0.1);
+            border-left-color: var(--accent-primary);
+        }
+
+        .command-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .command-syntax {
+            font-weight: 600;
+            color: var(--accent-secondary);
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .command-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .no-results.show {
+            display: block;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 2px solid var(--border);
+            margin-top: 60px;
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+                letter-spacing: 4px;
+            }
+
+            .category-title {
+                font-size: 1.1rem;
+            }
+
+            .command-syntax {
+                font-size: 0.95rem;
+            }
+
+            .command-description {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PELADOSRP</h1>
+        <div class="subtitle">Guía de Comandos</div>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <i class="search-icon" data-lucide="search"></i>
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Buscar comandos... (ej: /advert, /pm, roll)"
+                autocomplete="off"
+            >
+        </div>
+
+        <div id="categoriesContainer">
+            <!-- Las categorías se generan desde el JavaScript -->
+        </div>
+
+        <div class="no-results" id="noResults">
+            <i class="no-results-icon" data-lucide="alert-triangle"></i>
+            <h3>No se encontraron comandos</h3>
+            <p>Intenta con otros términos de búsqueda</p>
+        </div>
+    </div>
+
+    <footer>
+        Servidor <span class="footer-link">PeladosRP</span> • Garry's Mod DarkRP
+    </footer>
+
+    <script>
+        // ========================================
+        // CONFIGURACIÓN DE COMANDOS
+        // ========================================
+        // Para agregar nuevos comandos, simplemente añade un objeto a la categoría correspondiente
+        // o crea una nueva categoría siguiendo el mismo formato
+        
+        const commandsData = [
+            {
+                title: "Comunicación y Chat",
+                icon: "message-circle",
+                commands: [
+                    {
+                        syntax: "// (mensaje) o /ooc (mensaje)",
+                        description: "Chat global OOC (fuera de rol)"
+                    },
+                    {
+                        syntax: "/advert (mensaje)",
+                        description: "Envía un mensaje en forma de advertencia para todos"
+                    },
+                    {
+                        syntax: "/twitter (mensaje) o /tw (mensaje)",
+                        description: "Chat global IC en forma de red social"
+                    },
+                    {
+                        syntax: "/anon (mensaje)",
+                        description: "Envía un mensaje de forma anónima para todos"
+                    },
+                    {
+                        syntax: "/pm (nombre) (mensaje)",
+                        description: "Envía un mensaje privado al usuario seleccionado"
+                    }
+                ]
+            },
+            {
+                title: "Rol y Acciones",
+                icon: "drama",
+                commands: [
+                    {
+                        syntax: "/me (acción)",
+                        description: "Se utiliza para rolear acciones"
+                    },
+                    {
+                        syntax: "/roll",
+                        description: "Envía un número aleatorio al chat"
+                    }
+                ]
+            },
+            {
+                title: "Staff y Administración",
+                icon: "shield-check",
+                commands: [
+                    {
+                        syntax: "@ (mensaje)",
+                        description: "Envía un mensaje al grupo de staff"
+                    }
+                ]
+            },
+            {
+                title: "Propiedades y Puertas",
+                icon: "door-open",
+                commands: [
+                    {
+                        syntax: "/a (jugador)",
+                        description: "Agrega a un jugador a una puerta (debes estar mirando la puerta)"
+                    },
+                    {
+                        syntax: "/sellalldoors",
+                        description: "Vende todas tus puertas"
+                    }
+                ]
+            },
+            {
+                title: "Economía",
+                icon: "dollar-sign",
+                commands: [
+                    {
+                        syntax: "/dropmoney (cantidad)",
+                        description: "Tira al piso la cantidad de dinero elegida"
+                    },
+                    {
+                        syntax: "/give (cantidad)",
+                        description: "Da dinero directamente a la persona que estés viendo"
+                    },
+                    {
+                        syntax: "/check (nombre) (cantidad)",
+                        description: "Genera un cheque que solo puede tomar el destinatario"
+                    }
+                ]
+            },
+            {
+                title: "Armas y Objetos",
+                icon: "crosshair",
+                commands: [
+                    {
+                        syntax: "/makeshipment",
+                        description: "Junta armas singulares en una caja (shipment), es necesario estar viendo el arma"
+                    }
+                ]
+            },
+            {
+                title: "Grupos y Organizaciones",
+                icon: "users",
+                commands: [
+                    {
+                        syntax: "!party",
+                        description: "Abre el menú para crear equipos (party)"
+                    },
+                    {
+                        syntax: "/gang",
+                        description: "Abre el menú para crear pandillas (gangs)"
+                    }
+                ]
+            },
+            {
+                title: "Información del Servidor",
+                icon: "info",
+                commands: [
+                    {
+                        syntax: "/motd",
+                        description: "Abre la página oficial de PeladosRP (Discord, reglas y recomendaciones)"
+                    }
+                ]
+            }
+        ];
+
+        // ========================================
+        // FUNCIONALIDAD (NO NECESITAS MODIFICAR)
+        // ========================================
+        
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+
+        // Renderizar todas las categorías
+        function renderCategories(data = commandsData, searchTerm = '') {
+            categoriesContainer.innerHTML = '';
+            let hasResults = false;
+
+            data.forEach((category, index) => {
+                const filteredCommands = searchTerm 
+                    ? category.commands.filter(cmd => 
+                        cmd.syntax.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        cmd.description.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    : category.commands;
+
+                if (filteredCommands.length === 0) return;
+
+                hasResults = true;
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                if (searchTerm) categoryDiv.classList.add('active'); // Auto-expandir al buscar
+                
+                categoryDiv.innerHTML = `
+                    <div class="category-header">
+                        <div class="category-title">
+                            <i class="category-icon" data-lucide="${category.icon}"></i>
+                            ${category.title}
+                        </div>
+                        <span class="chevron">▼</span>
+                    </div>
+                    <div class="category-content">
+                        ${filteredCommands.map(cmd => `
+                            <div class="command-item">
+                                <div class="command-syntax">${highlightText(cmd.syntax, searchTerm)}</div>
+                                <div class="command-description">${highlightText(cmd.description, searchTerm)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                categoryDiv.querySelector('.category-header').addEventListener('click', () => {
+                    categoryDiv.classList.toggle('active');
+                });
+
+                categoriesContainer.appendChild(categoryDiv);
+            });
+
+            noResults.classList.toggle('show', !hasResults);
+            
+            // Initialize Lucide icons after rendering
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Resaltar texto en búsqueda
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span style="background: rgba(91, 163, 208, 0.3); padding: 2px 4px; border-radius: 2px;">$1</span>');
+        }
+
+        // Búsqueda en tiempo real
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            renderCategories(commandsData, searchTerm);
+        });
+
+        // Renderizar inicial
+        renderCategories();
+        
+        // Initialize icons on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
